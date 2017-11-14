@@ -6,8 +6,14 @@ using UnityEngine;
 
 public class Hacker : MonoBehaviour
 {
+    // Game Configuration Data
+    string[] level1Passwords = { "dolls", "mommy", "green", "flower", "candy" };
+    string[] level2Passwords = { "teacher", "biology", "student", "private", "learned" };
+    string[] level3Passwords = { "lollipop", "confection", "chocolate", "caramelize", "marshmallow" };
+
     // Game State
     int level;
+    string password;
 
     enum Screen { MainMenu, Password, Win };
     Screen currentScreen = Screen.MainMenu;
@@ -30,8 +36,14 @@ public class Hacker : MonoBehaviour
         {
             RunMainMenu(input);
         }
+        else if (currentScreen == Screen.Password)
+        {
+            CheckPassword(input);
+        }
 
     }
+
+    
 
     void ShowMainMenu ()
     {
@@ -46,22 +58,13 @@ public class Hacker : MonoBehaviour
 
     void RunMainMenu(string input)
     {
-        if (input == "1")
+        bool isValidLevelNumber = (input == "1" || input == "2" || input == "3");
+        if (isValidLevelNumber)
         {
-            level = 1;
+            level = int.Parse(input);
             StartGame();
         }
-        else if (input == "2")
-        {
-            level = 2;
-            StartGame();
-        }
-        else if (input == "3")
-        {
-            level = 3;
-            StartGame();
-        }
-        else if (input == "grow up")
+        else if (input == "grow up") // Easter egg, Add bonus level later
         {
             Terminal.WriteLine("Congratulations, you just grew up.");
         }
@@ -71,11 +74,52 @@ public class Hacker : MonoBehaviour
         }
     }
 
+    void CheckPassword(string input)
+    {
+        if (input == password)
+        {
+            if (level == 1)
+            {
+                Terminal.WriteLine("Congratulations, you now have access to your sister's diary.");
+            }
+            else if (level == 2)
+            {
+                Terminal.WriteLine("Congratulations, you can now change your grades.");
+            }
+            else if (level == 3)
+            {
+                Terminal.WriteLine("Congratulations, pick you candy");
+            }
+        }
+        else
+        {
+            Terminal.WriteLine("Please try again");
+        }
+    }
+
     void StartGame ()
     {
         currentScreen = Screen.Password;
+        Terminal.ClearScreen();
+        switch(level)
+        {
+            case 1:
+                password = level1Passwords[0];
+                break;
+            case 2:
+                password = level2Passwords[2];
+                break;
+            case 3:
+                password = level3Passwords[1];
+                break;
+            default:
+                Debug.LogError("Invalid level number");
+                break;
+        }
         Terminal.WriteLine("You have chosen level " + level);
+        Terminal.WriteLine("Please enter your password");
     }
+   
 
     // Update is called once per frame
     void Update()
